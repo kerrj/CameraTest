@@ -15,7 +15,7 @@ import com.qualcomm.ftcrobotcontroller.ScriptC_colorsplit;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
-public class MainActivity extends AppCompatActivity implements FTCCamera.AllocationListener
+public class MainActivity extends AppCompatActivity
 {
     static  RenderScript mRS;
     public static int WIDTH=1280,HEIGHT=720;
@@ -38,9 +38,8 @@ public class MainActivity extends AppCompatActivity implements FTCCamera.Allocat
 
     static Allocation allocationIn,allocationOut;
     static MainActivity activity;
-    private FTCCamera ftcCamera;
-    private FTCVuforia ftcVuforia;
     MySurfaceView surfaceView;
+    Sandbox s;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,62 +47,18 @@ public class MainActivity extends AppCompatActivity implements FTCCamera.Allocat
         surfaceView=(MySurfaceView)findViewById(R.id.surfaceView);
         activity=this;
         mRS=RenderScript.create(this);
-        colorsplit=new ScriptC_colorsplit(mRS);
         allocationIn=Allocation.createTyped(mRS, Type.createXY(mRS, Element.RGBA_8888(mRS), WIDTH,HEIGHT),
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_GRAPHICS_TEXTURE | Allocation.USAGE_SCRIPT|Allocation.USAGE_IO_INPUT);
         allocationOut=Allocation.createTyped(mRS, Type.createXY(mRS, Element.RGBA_8888(mRS), WIDTH, HEIGHT),
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_GRAPHICS_TEXTURE | Allocation.USAGE_SCRIPT);
-        ftcCamera=new FTCCamera(this);
-        ftcCamera.startCamera();
-
-//        ftcVuforia=new FTCVuforia(this);
-//        ftcVuforia.addTrackables("FTC_2016-17.xml");
-//        ftcVuforia.initVuforia();
+        s=new Sandbox(surfaceView);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(ftcCamera!=null) ftcCamera.stopCamera();
-        if (ftcVuforia!=null) ftcVuforia.pauseVuforia();
+        s.pause();
     }
 
 
-    public Bitmap cvtAlloc2Bitmap(Allocation a){
-        Bitmap b=Bitmap.createBitmap(WIDTH,HEIGHT, Bitmap.Config.ARGB_8888);
-        a.copyTo(b);
-        return b;
-    }
-    public Allocation cvtBitmap2Alloc(Bitmap b){
-        Allocation a=Allocation.createFromBitmap(mRS,b);
-        return a;
-    }
-    public Mat cvtBitmap2Mat(Bitmap b){
-        Mat m=new Mat();
-        Utils.bitmapToMat(b,m);
-        return m;
-    }
-    public Bitmap cvtMat2Bitmap(Mat m){
-        Bitmap b=Bitmap.createBitmap(m.width(),m.height(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(m,b);
-        return b;
-    }
-    public Mat cvtAlloc2Mat(Allocation a){
-        Bitmap b=cvtAlloc2Bitmap(a);
-        Mat m=cvtBitmap2Mat(b);
-        return m;
-    }
-    public Allocation cvtMat2Alloc(Mat m){
-        Bitmap b=cvtMat2Bitmap(m);
-        Allocation a=cvtBitmap2Alloc(b);
-        return a;
-    }
-
-
-    ScriptC_colorsplit colorsplit;
-    @Override
-    public void onAllocationAvailable(Allocation inAlloc, Allocation outAlloc) {
-        Bitmap b=cvtAlloc2Bitmap(inAlloc);
-        surfaceView.updateBitmap(b);
-    }
 }
