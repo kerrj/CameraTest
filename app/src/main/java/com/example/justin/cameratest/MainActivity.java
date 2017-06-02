@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         surfaceView=(MySurfaceView)findViewById(R.id.surfaceView);
         activity=this;
-        mRS=RenderScript.create(this);
+        mRS=RenderScript.create(this, RenderScript.ContextType.DEBUG);
         allocationIn=Allocation.createTyped(mRS, Type.createXY(mRS, Element.RGBA_8888(mRS), WIDTH,HEIGHT),
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_GRAPHICS_TEXTURE | Allocation.USAGE_SCRIPT|Allocation.USAGE_IO_INPUT);
         allocationOut=Allocation.createTyped(mRS, Type.createXY(mRS, Element.RGBA_8888(mRS), WIDTH, HEIGHT),

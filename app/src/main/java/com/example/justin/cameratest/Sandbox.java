@@ -2,6 +2,7 @@ package com.example.justin.cameratest;
 
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
+import android.util.Log;
 
 import com.qualcomm.ftcrobotcontroller.ScriptC_colorsplit;
 
@@ -26,16 +27,15 @@ public class Sandbox implements FTCCamera.AllocationListener {
     FTCCamera camera;
     FTCVuforia vuforia;
     MySurfaceView surfaceView;
-    ScriptC_colorsplit colorsplit;
+    Canny canny=new Canny(WIDTH,HEIGHT,3,(short)35,(short)20);
 
 
     //This code would run in init() during an opmode
     public Sandbox(MySurfaceView s){
         camera=new FTCCamera(this);
         camera.startCamera();
-        colorsplit=new ScriptC_colorsplit(MainActivity.getmRS());
         surfaceView=s;
-//        vuforia=new FTCVuforia(this);
+//        vuforia=new FTCVuforia(MainActivity.getActivity());
 //        vuforia.addTrackables("FTC_2016-17.xml");
 //        vuforia.initVuforia();
     }
