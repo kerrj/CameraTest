@@ -51,6 +51,11 @@ public class MainActivity extends AppCompatActivity
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_GRAPHICS_TEXTURE | Allocation.USAGE_SCRIPT|Allocation.USAGE_IO_INPUT);
         allocationOut=Allocation.createTyped(mRS, Type.createXY(mRS, Element.RGBA_8888(mRS), WIDTH, HEIGHT),
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_GRAPHICS_TEXTURE | Allocation.USAGE_SCRIPT);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         s=new Sandbox(surfaceView);
     }
 

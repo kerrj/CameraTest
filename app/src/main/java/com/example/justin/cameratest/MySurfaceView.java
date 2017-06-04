@@ -3,7 +3,9 @@ package com.example.justin.cameratest;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -15,6 +17,7 @@ import android.view.SurfaceView;
 
 public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback{
     Bitmap bitmap= Bitmap.createBitmap(MainActivity.WIDTH,MainActivity.HEIGHT, Bitmap.Config.ARGB_8888);
+    Point[] points;
     UpdateThread thread;
     public MySurfaceView(Context context) {
         super(context);
@@ -23,6 +26,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     public void updateBitmap(Bitmap b){
         bitmap=b;
+    }
+    public void updatePoints(Point[] p){
+        points=p;
     }
     public MySurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -73,8 +79,15 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 try {
                     canvas = holder.lockCanvas();
                     Paint paint = new Paint();
+                    paint.setStrokeWidth(50);
+                    paint.setColor(Color.GREEN);
                     canvas.rotate(90);
                     canvas.drawBitmap(bitmap, 0,-720, paint);
+                    if(points!=null){
+                        for(Point p:points) {
+                            canvas.drawPoint(p.x, p.y-720, paint);
+                        }
+                    }
                     holder.unlockCanvasAndPost(canvas);
                 }catch(Exception e) {//kill all exceptions xd
                     e.printStackTrace();

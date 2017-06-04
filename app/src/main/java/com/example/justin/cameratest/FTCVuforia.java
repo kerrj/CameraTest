@@ -91,7 +91,6 @@ public class FTCVuforia implements Vuforia.UpdateCallbackInterface {
         if (success) {
             startVuforiaCamera();
             CameraDevice.getInstance().setFocusMode(CameraDevice.FOCUS_MODE.FOCUS_MODE_CONTINUOUSAUTO);
-            CameraDevice.getInstance().setFlashTorchMode(true);
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
             mInit = true;
             return true;
@@ -415,12 +414,7 @@ public class FTCVuforia implements Vuforia.UpdateCallbackInterface {
                     float distanceFromTargetZDirection=40;
                     float marginFromCenterLine=31;
 
-                    Vec2F middleLeft=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(-marginFromCenterLine,0,distanceFromTargetZDirection));
-                    Vec2F middleRight=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(marginFromCenterLine,0,distanceFromTargetZDirection));
-                    Vec2F left=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(-targetWidth/2+displacementInFromTarget,0,distanceFromTargetZDirection));
-                    Vec2F right=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(targetWidth/2-displacementInFromTarget,0,distanceFromTargetZDirection));
-                    Vec2F bottom=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(0,targetHeight/2+bottomHeightAboveTargetTop,distanceFromTargetZDirection));
-                    Vec2F top=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(0,targetHeight/2+topHeightAboveTargetTop,distanceFromTargetZDirection));
+                    Vec2F middle=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(0,0,0));
                     float[][] rotation = {{data[0], data[1], data[2]},
                             {data[4], data[5], data[6]},
                             {data[8], data[9], data[10]}};
@@ -440,23 +434,9 @@ public class FTCVuforia implements Vuforia.UpdateCallbackInterface {
                     tempVuforiaData[6] = System.currentTimeMillis();
 
 
-                    tempVuforiaData[7]=middleLeft.getData()[0];
-                    tempVuforiaData[8]=middleLeft.getData()[1];
+                    tempVuforiaData[7]=middle.getData()[0];
+                    tempVuforiaData[8]=middle.getData()[1];
 
-                    tempVuforiaData[9]=left.getData()[0];
-                    tempVuforiaData[10]=left.getData()[1];
-
-                    tempVuforiaData[11]=right.getData()[0];
-                    tempVuforiaData[12]=right.getData()[1];
-
-                    tempVuforiaData[13]=bottom.getData()[0];
-                    tempVuforiaData[14]=bottom.getData()[1];
-
-                    tempVuforiaData[15]=top.getData()[0];
-                    tempVuforiaData[16]=top.getData()[1];
-
-                    tempVuforiaData[17]=middleRight.getData()[0];
-                    tempVuforiaData[18]=middleRight.getData()[1];
 
 
 

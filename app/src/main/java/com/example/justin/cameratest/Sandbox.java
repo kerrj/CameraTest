@@ -13,6 +13,7 @@ import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.example.justin.cameratest.MainActivity.HEIGHT;
 import static com.example.justin.cameratest.MainActivity.WIDTH;
@@ -27,17 +28,22 @@ public class Sandbox implements FTCCamera.AllocationListener {
     FTCCamera camera;
     FTCVuforia vuforia;
     MySurfaceView surfaceView;
+    VuforiaThread thread;
     Canny canny=new Canny(WIDTH,HEIGHT,3,(short)35,(short)20);
 
 
     //This code would run in init() during an opmode
     public Sandbox(MySurfaceView s){
+        surfaceView=s;
+
         camera=new FTCCamera(this);
         camera.startCamera();
-        surfaceView=s;
+
+//        thread=new VuforiaThread();
 //        vuforia=new FTCVuforia(MainActivity.getActivity());
 //        vuforia.addTrackables("FTC_2016-17.xml");
 //        vuforia.initVuforia();
+//        thread.start();
     }
 
 
@@ -49,15 +55,6 @@ public class Sandbox implements FTCCamera.AllocationListener {
         Bitmap b=cvtAlloc2Bitmap(inAlloc);
         surfaceView.updateBitmap(b);
     }
-
-
-    //let's say we want to grab an image while Vuforia is operating, in which case you can't use FTCCamera
-    public void processVuforiaFrame(){
-        Bitmap frame=vuforia.getLastBitmap();
-        //do some processing
-        surfaceView.updateBitmap(frame);
-    }
-
 
 
     //some convenient conversion functions
@@ -91,9 +88,43 @@ public class Sandbox implements FTCCamera.AllocationListener {
         return a;
     }
 
+    //let's say we want to grab an image while Vuforia is operating, in which case you can't use FTCCamera
+    public void processVuforiaFrame(){
+        Bitmap frame=vuforia.getLastBitmap();
+        //do some processing
+        surfaceView.updateBitmap(frame);
+    }
+
+
+    //This is a thread which mimics what an opmode run() would do for using vuforia
+    private class VuforiaThread extends Thread{
+        boolean running=true;
+        public void kill(){
+            running=false;
+        }
+        public void run(){
+            while(running){
+                try {
+                    processVuforiaFrame();
+                    if(vuforia.getVuforiaData().containsKey("Wheels")) {
+                        double[] data = vuforia.getVuforiaData().get("Wheels");
+                        android.graphics.Point middle = new android.graphics.Point((int) data[7], (int) data[8]);
+                        android.graphics.Point[] points = new android.graphics.Point[]{middle};
+                        surfaceView.updatePoints(points);
+                    }
+                    Thread.sleep(1);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
     //kill running camera streams when the app closes
     //this would run during opmode stop()
     public void pause()  {
+        if(thread!=null)thread.kill();
         if(camera!=null) camera.stopCamera();
         if (vuforia!=null) try {
             vuforia.destroy();
