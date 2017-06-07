@@ -12,6 +12,9 @@ import android.util.Log;
 
 import com.qualcomm.ftcrobotcontroller.ScriptC_colorsplit;
 
+import org.opencv.android.InstallCallbackInterface;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
@@ -52,6 +55,17 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         surfaceView=(MySurfaceView)findViewById(R.id.surfaceView);
+//        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, new LoaderCallbackInterface() {
+//            @Override
+//            public void onManagerConnected(int status) {
+//
+//            }
+//
+//            @Override
+//            public void onPackageInstall(int operation, InstallCallbackInterface callback) {
+//
+//            }
+//        });
 
         //initialize the variables we need for Sandbox
         activity=this;
