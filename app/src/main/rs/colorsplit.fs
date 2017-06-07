@@ -44,6 +44,7 @@ uchar4 __attribute__ ((kernel)) split(uchar4 in, uint32_t x, uint32_t y){
      float S=delta/V;
 
     uchar4 pixelOut;
+    //edit these values to determine what the filter outputs
     if(H>345||H<15){
         pixelOut=(uchar4){255,255,255,255};
     }else{
