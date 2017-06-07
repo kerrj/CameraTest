@@ -36,14 +36,14 @@ public class Sandbox implements FTCCamera.AllocationListener {
     public Sandbox(MySurfaceView s){
         surfaceView=s;
 
-        camera=new FTCCamera(this);
-        camera.startCamera();
+//        camera=new FTCCamera(this);
+//        camera.startCamera();
 
-//        thread=new VuforiaThread();
-//        vuforia=new FTCVuforia(MainActivity.getActivity());
-//        vuforia.addTrackables("FTC_2016-17.xml");
-//        vuforia.initVuforia();
-//        thread.start();
+        thread=new VuforiaThread();
+        vuforia=new FTCVuforia(MainActivity.getActivity());
+        vuforia.addTrackables("FTC_2016-17.xml");
+        vuforia.initVuforia();
+        thread.start();
     }
 
 
@@ -102,16 +102,24 @@ public class Sandbox implements FTCCamera.AllocationListener {
         public void kill(){
             running=false;
         }
+
         public void run(){
             while(running){
                 try {
                     processVuforiaFrame();
+                    //draw a dot in the center of the target, whose coordinates come from FTCVuforia.Vuforia_onUpdate
                     if(vuforia.getVuforiaData().containsKey("Wheels")) {
+                        //retrieve the data for the wheels image target
                         double[] data = vuforia.getVuforiaData().get("Wheels");
+
+                        //make a Point object from the returned data
                         android.graphics.Point middle = new android.graphics.Point((int) data[7], (int) data[8]);
                         android.graphics.Point[] points = new android.graphics.Point[]{middle};
+
+                        //pass the point to the surfaceview to draw
                         surfaceView.updatePoints(points);
                     }
+                    //sleeping prevents the thread from idling and wasting processing
                     Thread.sleep(1);
                 }catch(Exception e){
                     e.printStackTrace();

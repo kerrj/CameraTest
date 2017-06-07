@@ -19,17 +19,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     Bitmap bitmap= Bitmap.createBitmap(MainActivity.WIDTH,MainActivity.HEIGHT, Bitmap.Config.ARGB_8888);
     Point[] points;
     UpdateThread thread;
+
     public MySurfaceView(Context context) {
         super(context);
         getHolder().addCallback(this);
     }
 
-    public void updateBitmap(Bitmap b){
-        bitmap=b;
-    }
-    public void updatePoints(Point[] p){
-        points=p;
-    }
+
     public MySurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
@@ -48,6 +44,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
+    //this is called when the application has opened, and the surface has been created
+    //so we start all our graphics tools at this stage
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         thread=new UpdateThread(holder);
@@ -59,11 +57,22 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
+    //this method runs when the surface is destroyed, so we kill the graphics thread
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         thread.kill();
     }
 
+
+    //these methods are for passing graphics information from Sandbox to be drawn here
+    public void updateBitmap(Bitmap b){
+        bitmap=b;
+    }
+    public void updatePoints(Point[] p){
+        points=p;
+    }
+
+    //this is the thread which handles drawing bitmaps and graphics
     public class UpdateThread extends Thread{
         boolean running=true;
         SurfaceHolder holder;
@@ -74,20 +83,26 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         public void kill(){
             running=false;
         }
+
         public void run(){
             while(running){
                 try {
+                    //the canvas object is what we draw on to display on the screen
                     canvas = holder.lockCanvas();
                     Paint paint = new Paint();
                     paint.setStrokeWidth(50);
                     paint.setColor(Color.GREEN);
+                    //the input image is rotated 90 deg by default, so rotate back
                     canvas.rotate(90);
+                    //draw the latest bitmap
                     canvas.drawBitmap(bitmap, 0,-720, paint);
+                    //draw the list of points
                     if(points!=null){
                         for(Point p:points) {
                             canvas.drawPoint(p.x, p.y-720, paint);
                         }
                     }
+                    //add any additional draw methdos here, and add -720 to the y coord because of the rotation
                     holder.unlockCanvasAndPost(canvas);
                 }catch(Exception e) {//kill all exceptions xd
                     e.printStackTrace();

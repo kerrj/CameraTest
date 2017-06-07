@@ -16,8 +16,8 @@ uchar4 __attribute__ ((kernel)) split(uchar4 in, uint32_t x, uint32_t y){
    //     pixelOut=(uchar4){0,0,0,255};
    //}
    //return pixelOut;
-    //hsv filter========================================
 
+    //hsv filter========================================
     float R=(float)in.r/255.000000f;
     float G=(float)in.g/255.000000f;
     float B=(float)in.b/255.000000f;

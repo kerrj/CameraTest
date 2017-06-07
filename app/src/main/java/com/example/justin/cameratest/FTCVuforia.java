@@ -408,17 +408,15 @@ public class FTCVuforia implements Vuforia.UpdateCallbackInterface {
                     //Also a timestamp is added
                     Matrix34F matrix=result.getPose();
                     float[] data = matrix.getData();
-                    float topHeightAboveTargetTop=177;
-                    float displacementInFromTarget=40;//26
-                    float bottomHeightAboveTargetTop=40;
-                    float distanceFromTargetZDirection=40;
-                    float marginFromCenterLine=31;
 
+                    //this is how you project real life points to image coordinates
+                    //The final argument is xyz coordinates relative to the center of the target
+                    //returns a vector of the form {x,y} for image coordinates
                     Vec2F middle=Tool.projectPoint(CameraDevice.getInstance().getCameraCalibration(), matrix, new Vec3F(0,0,0));
+
                     float[][] rotation = {{data[0], data[1], data[2]},
                             {data[4], data[5], data[6]},
                             {data[8], data[9], data[10]}};
-
                     double thetaX = Math.atan2(rotation[2][1], rotation[2][2]);
                     double thetaY = Math.atan2(-rotation[2][0], Math.sqrt(rotation[2][1] * rotation[2][1] + rotation[2][2] * rotation[2][2]));
                     double thetaZ = Math.atan2(rotation[1][0], rotation[0][0]);
@@ -434,6 +432,7 @@ public class FTCVuforia implements Vuforia.UpdateCallbackInterface {
                     tempVuforiaData[6] = System.currentTimeMillis();
 
 
+                    //we pass the middle point as additional values in the total data array
                     tempVuforiaData[7]=middle.getData()[0];
                     tempVuforiaData[8]=middle.getData()[1];
 
